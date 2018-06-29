@@ -6,17 +6,17 @@ Test module get_wan_info
 import csv
 from ipaddress import IPv4Network
 from easysnmp import Session
-import settings
+import config
 from utils import ping_host
 from snmp_getters import get_lan_info, get_sys_info, get_wan_info, get_wifi_info
-from mongo_store import store_record
+from mongo_ops import store_doc, find_doc
 
 def main():
     """main function"""
-    # networks = [IPv4Network(x) for x in settings.NETWORKS]
-    networks = [IPv4Network('10.228.80.0/20')]
-    outfile = settings.OUTFILE
-    fieldnames = settings.FIELDNAMES
+    # networks = [IPv4Network(x) for x in config.NETWORKS]
+    networks = [IPv4Network('10.228.80.0/28')]
+    outfile = config.OUTFILE
+    fieldnames = config.FIELDNAMES
 
     with open(outfile, 'w') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -40,8 +40,11 @@ def main():
                     writer.writerow(host_info)
 
                 # Store in db
-                record_id = store_record(host_info)
-                print(record_id)
+                if not find_doc(host_info['MAC Address']):
+                    doc_id = store_doc(host_info)
+                    print(doc_id)
+                else:
+                    print("Modem exists")
             else:
                 print('{} no response'.format(str(host)))
 

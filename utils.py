@@ -5,7 +5,7 @@ Test module get_wan_info
 
 import subprocess
 from ipaddress import IPv4Address
-import settings
+import config
 
 def convert_to_hex(val):
     """Return an uppercased hexidecimal string representation of val."""
@@ -17,7 +17,7 @@ def convert_to_ip(val):
 
 def pretty_keys(info):
     """Returns info dictionary with shortened keys."""
-    return dict((settings.SWITCH[k], info[k]) for k in info)
+    return dict((config.SWITCH[k], info[k]) for k in info)
 
 def ping_host(host):
     """

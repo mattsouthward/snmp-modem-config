@@ -5,7 +5,7 @@ Test module get_wan_info
 
 from easysnmp import EasySNMPError
 from utils import convert_to_hex, convert_to_ip, pretty_keys
-import settings
+import config
 import mibs
 
 def get_wan_info(session):
@@ -30,7 +30,7 @@ def get_sys_info(session):
 
     # If the process_indexed_mibs failed or if it returned a modem
     # model we don't care about return to the caller
-    if not sys_info or sys_info['Model'] not in settings.MODELS:
+    if not sys_info or sys_info['Model'] not in config.MODELS:
         return 0
 
     # The following bool's set the 2G Wifi Enabled key to either True or
