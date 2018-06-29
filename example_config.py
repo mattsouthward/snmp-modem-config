@@ -10,7 +10,7 @@ MODELS = [
     # Modem models to store data about
 ]
 
-OUTFILE = 'host_config_data.csv'
+OUTFILE = '' # csv file to save data to.
 
 FIELDNAMES = [
     # Fieldnames to use in csv file. Should match values in SWITCH.

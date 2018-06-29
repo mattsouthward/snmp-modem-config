@@ -18,9 +18,12 @@ def main():
     outfile = config.OUTFILE
     fieldnames = config.FIELDNAMES
 
-    with open(outfile, 'w') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
+    # If output file is specified, initialize the file to 
+    # contain only a header.
+    if outfile:
+        with open(outfile, 'w') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
 
     for network in networks:
         for host in network:
@@ -34,10 +37,11 @@ def main():
 
                 host_info['IP Address'] = str(host)
 
-                # Write results to csv
-                with open(outfile, 'a', newline='') as csvfile:
-                    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                    writer.writerow(host_info)
+                # Write results to csv if output file was specified
+                if outfile:
+                    with open(outfile, 'a', newline='') as csvfile:
+                        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                        writer.writerow(host_info)
 
                 # Store in db
                 if not find_doc(host_info['MAC Address']):
