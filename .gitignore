@@ -4,3 +4,4 @@ tests/
 .pylintrc
 *.csv
 settings.*
+config.py
