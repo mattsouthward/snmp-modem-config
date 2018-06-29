@@ -4,7 +4,6 @@ Test module get_wan_info
 """
 
 import csv
-import json
 from ipaddress import IPv4Network
 from easysnmp import Session
 import settings
@@ -43,7 +42,6 @@ def main():
                 # Store in db
                 record_id = store_record(host_info)
                 print(record_id)
-                # print(json.dumps(host_info, indent=4, separators=(',', ':')))
             else:
                 print('{} no response'.format(str(host)))
 

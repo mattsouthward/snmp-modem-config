@@ -34,7 +34,7 @@ def get_sys_info(session):
         return 0
 
     # The following bool's set the 2G Wifi Enabled key to either True or
-    # False. Only if both the radio and the 'wifi' are enabled in the modem
+    # False. Only if both radio and 'wifi' are enabled in the modem
     # is the wireless actually enabled.
     sys_info['2G Wifi Enabled'] = bool(
         sys_info['2G Radio'] == '1' and sys_info['2G Wifi'] == '1')
