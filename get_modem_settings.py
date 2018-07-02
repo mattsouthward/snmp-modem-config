@@ -7,9 +7,9 @@ import csv
 from ipaddress import IPv4Network
 from easysnmp import Session
 import config
+import db
 from utils import ping_host
 from snmp_getters import get_lan_info, get_sys_info, get_wan_info, get_wifi_info
-from mongo_ops import store_doc, find_doc
 
 def main():
     """main function"""
@@ -18,7 +18,7 @@ def main():
     outfile = config.OUTFILE
     fieldnames = config.FIELDNAMES
 
-    # If output file is specified, initialize the file to 
+    # If output file is specified, initialize the file to
     # contain only a header.
     if outfile:
         with open(outfile, 'w') as csvfile:
@@ -44,13 +44,14 @@ def main():
                         writer.writerow(host_info)
 
                 # Store in db
-                if not find_doc(host_info['MAC Address']):
-                    doc_id = store_doc(host_info)
+                if not db.MODEMS.find_one({"MAC Address": host_info["MAC Address"]}):
+                    doc_id = db.MODEMS.insert_one(host_info).inserted_id
                     print(doc_id)
                 else:
-                    print("Modem exists")
+                    print("Modem exists. Updating...") # REMOVE IN PRODUCTION
+
             else:
-                print('{} no response'.format(str(host)))
+                print('{} no response'.format(str(host))) # REMOVE IN PRODUCTION
 
 def query_host(host):
     """Return host config data
