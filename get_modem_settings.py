@@ -14,7 +14,7 @@ from snmp_getters import get_lan_info, get_sys_info, get_wan_info, get_wifi_info
 def main():
     """main function"""
     # networks = [IPv4Network(x) for x in config.NETWORKS]
-    networks = [IPv4Network('10.228.80.0/28')]
+    networks = [IPv4Network('10.228.80.96/28')]
     outfile = config.OUTFILE
     fieldnames = config.FIELDNAMES
 
@@ -43,12 +43,19 @@ def main():
                         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                         writer.writerow(host_info)
 
-                # Store in db
-                if not db.MODEMS.find_one({"MAC Address": host_info["MAC Address"]}):
-                    doc_id = db.MODEMS.insert_one(host_info).inserted_id
-                    print(doc_id)
-                else:
-                    print("Modem exists. Updating...") # REMOVE IN PRODUCTION
+                # Store host_info in db if it isn't already
+                updated_doc = db.MODEMS.find_one_and_replace(
+                    {'MAC Address': host_info['MAC Address']},
+                    host_info,
+                    projection={'MAC Address': True, '_id': False},
+                    upsert=True
+                )
+
+                print('{} found. Replacing'.format(updated_doc['MAC Address'])
+                      if updated_doc
+                      else
+                      '{} not found. Inserting.'.format(host_info['MAC Address'])
+                     )
 
             else:
                 print('{} no response'.format(str(host))) # REMOVE IN PRODUCTION
