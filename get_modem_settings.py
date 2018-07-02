@@ -43,7 +43,8 @@ def main():
                         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                         writer.writerow(host_info)
 
-                # Store host_info in db if it isn't already
+                # Store host_info in db if it isn't already, replace it
+                # if it is.
                 updated_doc = db.MODEMS.find_one_and_replace(
                     {'MAC Address': host_info['MAC Address']},
                     host_info,
