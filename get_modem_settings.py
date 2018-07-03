@@ -13,8 +13,8 @@ from snmp_getters import get_lan_info, get_sys_info, get_wan_info, get_wifi_info
 
 def main():
     """main function"""
-    # networks = [IPv4Network(x) for x in config.NETWORKS]
-    networks = [IPv4Network('10.228.80.96/28')]
+    networks = [IPv4Network(x) for x in config.NETWORKS]
+    # networks = [IPv4Network('10.228.80.96/28')]
     outfile = config.OUTFILE
     fieldnames = config.FIELDNAMES
 
@@ -27,6 +27,7 @@ def main():
 
     for network in networks:
         for host in network:
+            host = str(host)
             host_info = {}
             if ping_host(host):
                 # Query the host for config
@@ -35,7 +36,7 @@ def main():
                 if not host_info:
                     continue
 
-                host_info['IP Address'] = str(host)
+                host_info['IP Address'] = host
 
                 # Write results to csv if output file was specified
                 if outfile:
@@ -59,19 +60,15 @@ def main():
                      )
 
             else:
-                print('{} no response'.format(str(host))) # REMOVE IN PRODUCTION
+                print('{} no response'.format(host)) # REMOVE IN PRODUCTION
 
 def query_host(host):
-    """Return host config data
-
-    Sets up the SNMP session, processes the query functions
-    and returns host config data
-    """
+    """Perform SNMP queries on host and return host config data."""
     functs = [get_sys_info, get_lan_info, get_wan_info, get_wifi_info]
     community_str = 'public'
     ver = 2
     host_info = {}
-    session = Session(str(host), community=community_str, version=ver)
+    session = Session(host, community=community_str, version=ver)
 
     for func in functs:
         data = func(session)
