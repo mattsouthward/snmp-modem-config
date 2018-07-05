@@ -56,7 +56,8 @@ def get_lan_info(session):
         '-1': 'unknown',
         '1': 'bridged',
         '2': 'routedWithNAT',
-        '3': 'routedWithoutNAT'
+        '3': 'routedWithoutNAT',
+        'NOSUCHINSTANCE': 'unknown'
     }
 
     lan_info = process_mibs(mibs.LAN, session)
