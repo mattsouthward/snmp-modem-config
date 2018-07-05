@@ -4,7 +4,7 @@ Test module get_wan_info
 """
 
 import subprocess
-from ipaddress import IPv4Address
+from ipaddress import IPv4Address, AddressValueError
 import config
 
 def convert_to_hex(val):
@@ -13,7 +13,10 @@ def convert_to_hex(val):
 
 def convert_to_ip(val):
     """Return an string representation of an IP address from val."""
-    return str(IPv4Address(bytes(val, 'latin-1')))
+    try:
+        return str(IPv4Address(bytes(val, 'latin-1')))
+    except AddressValueError:
+        return 0
 
 def pretty_keys(info):
     """Returns info dictionary with shortened keys."""

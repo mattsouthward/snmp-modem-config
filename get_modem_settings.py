@@ -26,7 +26,8 @@ def main():
             writer.writeheader()
 
     for network in networks:
-        for host in network:
+        hosts = network.hosts()
+        for host in hosts:
             host = str(host)
             host_info = {}
             if ping_host(host):
