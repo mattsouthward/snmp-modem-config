@@ -8,6 +8,8 @@ from utils import convert_to_hex, convert_to_ip, pretty_keys
 import config
 import mibs
 
+DEFAULT = 'unknown'
+
 def get_wan_info(session):
     """Test for function"""
     wan_types = {'1': 'dynamic', '2': 'static'}
@@ -18,7 +20,7 @@ def get_wan_info(session):
     if not wan_info:
         return 0
 
-    wan_info['WAN Type'] = wan_types[wan_info['WAN Type']]
+    wan_info['WAN Type'] = wan_types.get(wan_info['WAN Type'], DEFAULT)
     wan_info['WAN IP'] = convert_to_ip(wan_info['WAN IP'])
     wan_info['WAN Gateway IP'] = convert_to_ip(wan_info['WAN Gateway IP'])
 
@@ -56,8 +58,7 @@ def get_lan_info(session):
         '-1': 'unknown',
         '1': 'bridged',
         '2': 'routedWithNAT',
-        '3': 'routedWithoutNAT',
-        'NOSUCHINSTANCE': 'unknown'
+        '3': 'routedWithoutNAT'
     }
 
     lan_info = process_mibs(mibs.LAN, session)
@@ -68,7 +69,7 @@ def get_lan_info(session):
 
     for i in lan_info:
         if i == 'NAT Type':
-            lan_info[i] = nat_types[lan_info[i]]
+            lan_info[i] = nat_types.get(lan_info[i], DEFAULT)
         elif i == 'LAN DHCP Enabled':
             lan_info[i] = True if lan_info[i] == '1' else False
         else:
@@ -78,7 +79,10 @@ def get_lan_info(session):
 
 def get_wifi_info(session):
     """Return wireless info of host from session."""
-    ssid_broadcast = {'2': False, '1': True}
+    ssid_broadcast = {
+        '2': False,
+        '1': True
+    }
     security_mode = {
         '0': 'disabled',
         '1': 'wep',
@@ -95,12 +99,12 @@ def get_wifi_info(session):
         return 0
 
     for i in wifi_info:
-        if 'Security Mode' in i and wifi_info[i] != 'NOSUCHINSTANCE':
-            wifi_info[i] = security_mode[wifi_info[i]]
-        elif 'SSID Broadcast' in i and wifi_info[i] != 'NOSUCHINSTANCE':
-            wifi_info[i] = ssid_broadcast[wifi_info[i]]
+        if 'Security Mode' in i:
+            wifi_info[i] = security_mode.get(wifi_info[i], DEFAULT)
+        elif 'SSID Broadcast' in i:
+            wifi_info[i] = ssid_broadcast.get(wifi_info[i], DEFAULT)
         elif 'Wifi Enabled' in i:
-            wifi_info[i] = enabled[wifi_info[i]]
+            wifi_info[i] = enabled.get(wifi_info[i])
     if wifi_info['2G Security Mode'] == 'wep':
         wifi_info['2G PSK'] = 'Security mode is wep, update to psk'
     if wifi_info['5G Security Mode'] == 'wep':
