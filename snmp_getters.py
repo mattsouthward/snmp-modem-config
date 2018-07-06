@@ -104,7 +104,7 @@ def get_wifi_info(session):
         elif 'SSID Broadcast' in i:
             wifi_info[i] = ssid_broadcast.get(wifi_info[i], DEFAULT)
         elif 'Wifi Enabled' in i:
-            wifi_info[i] = enabled.get(wifi_info[i])
+            wifi_info[i] = enabled.get(wifi_info[i], DEFAULT)
     if wifi_info['2G Security Mode'] == 'wep':
         wifi_info['2G PSK'] = 'Security mode is wep, update to psk'
     if wifi_info['5G Security Mode'] == 'wep':
